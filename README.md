@@ -1,18 +1,32 @@
-<!---
-Copyright 2024 The HuggingFace Team. All rights reserved.
+<details>
+<summary style="font-size: 1.5em; font-weight: bold; margin: 20px 0;">How to make changes to the smolagents codebase</summary>
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+To make changes to the smolagents codebase we have to do the following:
+First, if you are using pyenv run:
+```bash
+pyenv global 3.10.14 # or whatever version you want
 
-    http://www.apache.org/licenses/LICENSE-2.0
+# then create and activate a virtual environment
+python -m venv venv
+source venv/bin/activate
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
--->
+# cd into the smolagents directory
+cd smolagents
+
+# then install the requirements
+pip install -e .
+
+# this will install the smolagents package in editable mode
+# if using litellm you need to install the litellm package
+pip install litellm
+
+# now you can make changes to the smolagents codebase
+
+```
+</details>
+
+
+
 <p align="center">
     <!-- Uncomment when CircleCI is set up
     <a href="https://circleci.com/gh/huggingface/accelerate"><img alt="Build" src="https://img.shields.io/circleci/build/github/huggingface/transformers/master"></a>
