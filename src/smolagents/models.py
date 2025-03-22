@@ -20,13 +20,16 @@ import warnings
 from copy import deepcopy
 from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union, Callable
+
 
 from huggingface_hub.utils import is_torch_available
 
 from .tools import Tool
 from .utils import _is_package_available, encode_image_base64, make_image_url, parse_json_blob
 
+# This is for callbacks
+PreCallHook = Callable[[Dict[str, Any]], None]
 
 if TYPE_CHECKING:
     from transformers import StoppingCriteriaList
@@ -852,6 +855,7 @@ class LiteLLMModel(ApiModel):
         api_key=None,
         custom_role_conversions: Optional[Dict[str, str]] = None,
         flatten_messages_as_text: bool | None = None,
+        pre_call_hook: Optional[PreCallHook] = None,  # Add this parameter
         **kwargs,
     ):
         if not model_id:
@@ -866,6 +870,9 @@ class LiteLLMModel(ApiModel):
         self.api_base = api_base
         self.api_key = api_key
         self.custom_role_conversions = custom_role_conversions
+        # Initialize the pre_call_hook with default if none provided
+        self.pre_call_hook = pre_call_hook if pre_call_hook is not None else lambda x: x
+        # Determine if messages should be flattened as text based on model_id
         flatten_messages_as_text = (
             flatten_messages_as_text
             if flatten_messages_as_text is not None
@@ -900,6 +907,9 @@ class LiteLLMModel(ApiModel):
             custom_role_conversions=self.custom_role_conversions,
             **kwargs,
         )
+
+        # Execute the pre-call hook
+        self.pre_call_hook(completion_kwargs)
 
         response = litellm.completion(**completion_kwargs)
 
